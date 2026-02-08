@@ -1,0 +1,32 @@
+ CREATE TYPE address_type AS OBJECT (
+street VARCHAR2(30), 
+city  VARCHAR2(20),
+state VARCHAR2(20)
+); 
+/
+
+ CREATE TABLE employee (
+ emp_id  NUMBER,
+ emp_name VARCHAR2(20),
+ addr address_type 
+ );
+
+INSERT INTO employee VALUES ( 1,'Ravi',address_type('MG Road','Chennai','Tamil Nadu'));
+
+INSERT INTO employee VALUES (2, 'Anu', address_type('Park Street','Bangalore','Karnataka'));
+
+SELECT e.emp_id, e.emp_name,
+e.addr.street,
+e.addr.city,
+e.addr.state
+FROM employee e; 
+
+UPDATE employee
+SET addr = address_type('Anna Nagar','Chennai','Tamil Nadu')
+WHERE emp_id = 1;
+
+SELECT e.emp_id, e.emp_name,
+e.addr.street, 
+e.addr.city, 
+e.addr.state
+FROM employee e;
