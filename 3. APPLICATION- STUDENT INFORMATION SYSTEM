@@ -1,0 +1,157 @@
+import tkinter as tk
+from tkinter import ttk, messagebox
+import sqlite3
+
+# ---------- Database ----------
+conn = sqlite3.connect("students.db")
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS students (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    age INTEGER,
+    course TEXT,
+    email TEXT,
+    marks INTEGER
+)
+""")
+conn.commit()
+
+
+# ---------- Functions ----------
+def add_student():
+    if id_entry.get() == "" or name_entry.get() == "":
+        messagebox.showerror("Error", "ID and Name are required")
+        return
+
+    try:
+        cursor.execute(
+            "INSERT INTO students VALUES (?, ?, ?, ?, ?, ?)",
+            (
+                int(id_entry.get()),
+                name_entry.get(),
+                age_entry.get(),
+                course_entry.get(),
+                email_entry.get(),
+                marks_entry.get(),
+            ),
+        )
+        conn.commit()
+        messagebox.showinfo("Success", "Student added successfully")
+        clear_fields()
+        fetch_students()
+
+    except sqlite3.IntegrityError:
+        messagebox.showerror("Error", "Student ID already exists")
+
+
+def fetch_students():
+    for row in tree.get_children():
+        tree.delete(row)
+
+    cursor.execute("SELECT * FROM students")
+    for row in cursor.fetchall():
+        tree.insert("", tk.END, values=row)
+
+
+def select_student(event):
+    selected = tree.focus()
+    if not selected:
+        return
+
+    values = tree.item(selected, "values")
+    clear_fields()
+
+    id_entry.insert(0, values[0])
+    name_entry.insert(0, values[1])
+    age_entry.insert(0, values[2])
+    course_entry.insert(0, values[3])
+    email_entry.insert(0, values[4])
+    marks_entry.insert(0, values[5])
+
+
+def update_student():
+    if id_entry.get() == "":
+        messagebox.showerror("Error", "Select a student first")
+        return
+
+    cursor.execute("""
+        UPDATE students
+        SET name=?, age=?, course=?, email=?, marks=?
+        WHERE id=?
+    """, (
+        name_entry.get(),
+        age_entry.get(),
+        course_entry.get(),
+        email_entry.get(),
+        marks_entry.get(),
+        int(id_entry.get())
+    ))
+
+    conn.commit()
+    messagebox.showinfo("Updated", "Student updated successfully")
+    clear_fields()
+    fetch_students()
+
+
+def delete_student():
+    if id_entry.get() == "":
+        messagebox.showerror("Error", "Select a student first")
+        return
+
+    cursor.execute("DELETE FROM students WHERE id=?", (int(id_entry.get()),))
+    conn.commit()
+    messagebox.showinfo("Deleted", "Student deleted successfully")
+    clear_fields()
+    fetch_students()
+
+
+def clear_fields():
+    id_entry.delete(0, tk.END)
+    name_entry.delete(0, tk.END)
+    age_entry.delete(0, tk.END)
+    course_entry.delete(0, tk.END)
+    email_entry.delete(0, tk.END)
+    marks_entry.delete(0, tk.END)
+
+
+# ---------- GUI ----------
+root = tk.Tk()
+root.title("Student Information System")
+root.geometry("820x480")
+root.resizable(False, False)
+
+labels = ["Student ID", "Name", "Age", "Course", "Email", "Marks"]
+for i, label in enumerate(labels):
+    tk.Label(root, text=label).place(x=20, y=20 + i * 40)
+
+id_entry = tk.Entry(root)
+name_entry = tk.Entry(root)
+age_entry = tk.Entry(root)
+course_entry = tk.Entry(root)
+email_entry = tk.Entry(root)
+marks_entry = tk.Entry(root)
+
+entries = [id_entry, name_entry, age_entry, course_entry, email_entry, marks_entry]
+for i, entry in enumerate(entries):
+    entry.place(x=130, y=20 + i * 40, width=200)
+
+tk.Button(root, text="Add", width=12, command=add_student).place(x=20, y=290)
+tk.Button(root, text="Update", width=12, command=update_student).place(x=140, y=290)
+tk.Button(root, text="Delete", width=12, command=delete_student).place(x=260, y=290)
+tk.Button(root, text="Clear", width=12, command=clear_fields).place(x=380, y=290)
+
+columns = ("ID", "Name", "Age", "Course", "Email", "Marks")
+tree = ttk.Treeview(root, columns=columns, show="headings")
+
+for col in columns:
+    tree.heading(col, text=col)
+    tree.column(col, width=110)
+
+tree.place(x=360, y=20, width=440, height=250)
+tree.bind("<ButtonRelease-1>", select_student)
+
+fetch_students()
+root.mainloop()
+conn.close()
