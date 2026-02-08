@@ -1,0 +1,25 @@
+OPEN NEO4J
+CLICK ADD => SELECT LOCAL DBMS
+GIVE NAME AND RANDOM PASSWORD
+CLICK CREATE
+CLICK START AFTER LOADING
+THE CODEING PAGE WILL APPEAR OR ELSE 
+IN LEFT SIDE CLICK THE SETTING SYMBOL WHICH HAVE THE NAME YOU CREATED NOW CODE PAGE WILL OPEN
+
+CREATE (:User {name: "Alice", email: "alice@gmail.com", city: "New York"}); 
+
+CREATE (:User {name: "Bob", email: "bob@gmail.com", city: "London"});
+
+MATCH (a:User {name: "Alice"}), (b:User {name: "Bob"}) 
+CREATE (a)-[:FRIENDS_OF]->(b);
+
+MATCH (u:User) 
+RETURN u.name, u.email; 
+
+MATCH (u1:User)-[:FRIENDS_OF]-(u2:User) 
+RETURN u1.name AS User1, u2.name AS User2;
+
+MATCH (u:User) 
+WHERE u.city = "New York" 
+RETURN u.name, u.email, u.city;
+
