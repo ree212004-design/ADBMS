@@ -1,0 +1,235 @@
+=>NOW GIVE THE BELOW TKINTER CODE IN NOTEPAD AND
+SAVE AS banking_system.py IN LOCATION DESKTOP BY GIVING THE FILE TYPE:ALL FILES
+=>AFTER SAVING IN DESKTOP DOUBLE CLICK THE FILE 
+=>IT WILL ASK PYTHON OR VS CODE GIVE PYTHON
+=>IT WILL RUN IN COMMAND PROMPT 
+=>ONCE IT COME OUTSIDE AGAIN DOUBLE CLICK THE FOLDER 
+OUTPUT IS READY
+
+
+
+
+import tkinter as tk
+from tkinter import messagebox
+import json
+import os
+
+# ---------- File Setup ----------
+FILE_NAME = "accounts.json"
+
+if not os.path.exists(FILE_NAME):
+    with open(FILE_NAME, "w") as file:
+        json.dump([], file)
+
+
+# ---------- Helper Functions ----------
+def load_accounts():
+    with open(FILE_NAME, "r") as file:
+        return json.load(file)
+
+
+def save_accounts(accounts):
+    with open(FILE_NAME, "w") as file:
+        json.dump(accounts, file, indent=4)
+
+
+# ---------- Banking Functions ----------
+def create_account():
+    name = entry_name.get()
+    acc_no = entry_acc.get()
+    balance = entry_balance.get()
+
+    if name == "" or acc_no == "" or balance == "":
+        messagebox.showerror("Error", "All fields are required")
+        return
+
+    if not balance.isdigit():
+        messagebox.showerror("Error", "Balance must be a number")
+        return
+
+    accounts = load_accounts()
+
+    for acc in accounts:
+        if acc["account_no"] == acc_no:
+            messagebox.showerror("Error", "Account number already exists")
+            return
+
+    account = {
+        "name": name,
+        "account_no": acc_no,
+        "balance": int(balance),
+    }
+
+    accounts.append(account)
+    save_accounts(accounts)
+
+    messagebox.showinfo("Success", "Account created successfully")
+    clear_fields()
+
+
+def deposit_money():
+    acc_no = entry_acc.get()
+    amount = entry_amount.get()
+
+    if acc_no == "" or amount == "":
+        messagebox.showerror("Error", "Account number and amount required")
+        return
+
+    if not amount.isdigit():
+        messagebox.showerror("Error", "Amount must be a number")
+        return
+
+    accounts = load_accounts()
+
+    for acc in accounts:
+        if acc["account_no"] == acc_no:
+            acc["balance"] += int(amount)
+            save_accounts(accounts)
+            messagebox.showinfo("Success", "Amount deposited successfully")
+            return
+
+    messagebox.showerror("Error", "Account not found")
+
+
+def withdraw_money():
+    acc_no = entry_acc.get()
+    amount = entry_amount.get()
+
+    if acc_no == "" or amount == "":
+        messagebox.showerror("Error", "Account number and amount required")
+        return
+
+    if not amount.isdigit():
+        messagebox.showerror("Error", "Amount must be a number")
+        return
+
+    accounts = load_accounts()
+
+    for acc in accounts:
+        if acc["account_no"] == acc_no:
+            if acc["balance"] < int(amount):
+                messagebox.showerror("Error", "Insufficient balance")
+                return
+
+            acc["balance"] -= int(amount)
+            save_accounts(accounts)
+            messagebox.showinfo("Success", "Amount withdrawn successfully")
+            return
+
+    messagebox.showerror("Error", "Account not found")
+
+
+def view_accounts():
+    text_display.delete("1.0", tk.END)
+    accounts = load_accounts()
+
+    if not accounts:
+        text_display.insert(tk.END, "No accounts available.\n")
+        return
+
+    for acc in accounts:
+        text_display.insert(
+            tk.END,
+            f"Name: {acc['name']} | Account No: {acc['account_no']} | Balance: ₹{acc['balance']}\n\n",
+        )
+
+
+def clear_fields():
+    entry_name.delete(0, tk.END)
+    entry_acc.delete(0, tk.END)
+    entry_balance.delete(0, tk.END)
+    entry_amount.delete(0, tk.END)
+
+
+# ---------- UI ----------
+root = tk.Tk()
+root.title("Banking Management System")
+root.geometry("800x600")
+root.configure(bg="#E6E6FA")
+
+header = tk.Label(
+    root,
+    text="Banking Management System",
+    font=("Arial", 18, "bold"),
+    bg="#9370DB",
+    fg="white",
+    pady=12,
+)
+header.pack(fill="x")
+
+main_frame = tk.Frame(root, bg="#E6E6FA", pady=15)
+main_frame.pack()
+
+label_font = ("Arial", 11)
+entry_width = 45
+
+
+def label(text):
+    return tk.Label(main_frame, text=text, font=label_font, bg="#E6E6FA")
+
+
+label("Account Holder Name").pack()
+entry_name = tk.Entry(main_frame, width=entry_width)
+entry_name.pack(pady=3)
+
+label("Account Number").pack()
+entry_acc = tk.Entry(main_frame, width=entry_width)
+entry_acc.pack(pady=3)
+
+label("Initial Balance").pack()
+entry_balance = tk.Entry(main_frame, width=entry_width)
+entry_balance.pack(pady=3)
+
+label("Amount (Deposit / Withdraw)").pack()
+entry_amount = tk.Entry(main_frame, width=entry_width)
+entry_amount.pack(pady=3)
+
+# ---------- Buttons ----------
+btn_frame = tk.Frame(main_frame, bg="#E6E6FA")
+btn_frame.pack(pady=12)
+
+tk.Button(
+    btn_frame,
+    text="Create Account",
+    command=create_account,
+    bg="#9370DB",
+    fg="white",
+    font=("Arial", 10, "bold"),
+    width=15,
+).grid(row=0, column=0, padx=5)
+
+tk.Button(
+    btn_frame,
+    text="Deposit",
+    command=deposit_money,
+    bg="#8A2BE2",
+    fg="white",
+    font=("Arial", 10, "bold"),
+    width=12,
+).grid(row=0, column=1, padx=5)
+
+tk.Button(
+    btn_frame,
+    text="Withdraw",
+    command=withdraw_money,
+    bg="#BA55D3",
+    fg="white",
+    font=("Arial", 10, "bold"),
+    width=12,
+).grid(row=0, column=2, padx=5)
+
+tk.Button(
+    btn_frame,
+    text="View Accounts",
+    command=view_accounts,
+    bg="#6A5ACD",
+    fg="white",
+    font=("Arial", 10, "bold"),
+    width=15,
+).grid(row=0, column=3, padx=5)
+
+# ---------- Display Area ----------
+text_display = tk.Text(root, height=14, width=95, font=("Consolas", 10), bg="white")
+text_display.pack(pady=15)
+
+root.mainloop()
