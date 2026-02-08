@@ -1,0 +1,46 @@
+IMPLEMENTATION CONSTRAINTS
+
+CREATE TABLE Emp30 ( 
+emp_id INT NOT NULL PRIMARY KEY, 
+Name VARCHAR(10) NOT NULL, 
+Age INT CHECK (Age >= 18), 
+Email_id VARCHAR(50) UNIQUE, 
+Phone INT NULL 
+); 
+
+CREATE TABLE empaddress ( 
+emp_id INT, 
+city VARCHAR(30), 
+FOREIGN KEY (emp_id) REFERENCES Emp30(emp_id) 
+); 
+
+ INSERT INTO Emp30 VALUES (101, 'Divya', 26, 'divya3123@gmail.com', 
+ 9723463728); 
+
+   INSERT INTO Emp30 VALUES (102, 'Revathi', 23, 'revathi54@gmail.com', 
+ 8436737078); 
+
+  INSERT INTO Emp30 VALUES (103, 'Malini', 24, 'malini@gmail.com', 
+ 6795327095); 
+
+ INSERT INTO Emp30 VALUES (104, 'Varshini', 22, 'varshini@gmail.com', 
+ 9998887776); 
+
+ INSERT INTO empaddress VALUES (101, 'Dindigul'); 
+
+ INSERT INTO empaddress VALUES (102, 'Trichy'); 
+
+ INSERT INTO empaddress VALUES (103, 'Karur'); 
+
+ INSERT INTO empaddress VALUES (104, 'Namakkal'); 
+
+ SELECT * FROM Emp30; 
+
+SELECT * FROM empaddress; 
+
+UPDATE Emp30 SET Age = 27 WHERE emp_id = 101; 
+
+SELECT * FROM Emp30; 
+
+DELETE FROM Emp30 WHERE emp_id = 104; 
+
