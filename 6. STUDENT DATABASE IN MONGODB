@@ -1,0 +1,39 @@
+THIS PC => PROGRAM FILES => MONGODB => MONGOSH  => IN PATH TYPE CMD
+
+THEN,
+mongodb://127.0.0.1:27017
+
+use test
+
+db.createCollection("students", { capped: true, size: 1024, max: 50 })
+
+db.students.insertOne({ id:1, name:"nivi", course:"cs", percentage:85 })
+db.students.insertOne({ id:2, name:"neena", course:"cs", percentage:80 })
+db.students.insertOne({ id:3, name:"jayasree", course:"it", percentage:92 })
+db.students.insertOne({ id:4, name:"harsha", course:"it", percentage:88 })
+db.students.insertOne({ id:5, name:"meena", course:"bsc", percentage:85 })
+db.students.insertOne({ id:6, name:"pooja", course:"bsc", percentage:82 })
+
+db.createCollection("students2", { capped: true, size: 1024, max: 50 })
+
+db.students2.insertOne({ id:1, age:"23", gender:"female", address:"coimbatore" })
+db.students2.insertOne({ id:2, age:"20", gender:"female", address:"coimbatore" })
+db.students2.insertOne({ id:3, age:"25", gender:"female", address:"erode" })
+db.students2.insertOne({ id:4, age:"24", gender:"female", address:"karur" })
+db.students2.insertOne({ id:5, age:"23", gender:"female", address:"salem" })
+db.students2.insertOne({ id:6, age:"22", gender:"female", address:"tiruppur" })
+
+db.students2.find({ address:"coimbatore" })
+
+db.students.find({ percentage: { $gt: 50 } })
+
+db.students2.find({ address:"erode", gender:"female" })
+
+db.students.find({ course:"bsc" }).sort({ percentage:-1 })
+
+
+
+
+DISPLAY ALL STUDENTS COMING FROM COIMBATORE
+
+
