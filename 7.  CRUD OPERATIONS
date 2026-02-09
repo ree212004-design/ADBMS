@@ -1,0 +1,59 @@
+THIS PC => PROGRAM FILES => MONGODB => MONGOSH  => IN PATH TYPE CMD
+
+THEN,
+mongodb://127.0.0.1:27017
+
+
+use userDB
+
+db.users.insertMany([
+ {
+  username: "Anitha",
+  email: "anitha@gmail.com",
+  age: 22,
+  lastLogin: new Date("2025-08-10")
+ },
+ {
+  username: "Arun",
+  email: "arun@gmail.com",
+  age: 25,
+  lastLogin: new Date("2025-07-15")
+ },
+ {
+  username: "Bala",
+  email: "bala@gmail.com",
+  age: 24,
+  lastLogin: new Date("2024-10-01")
+ },
+ {
+  username: "Akash",
+  email: "akash@gmail.com",
+  age: 26,
+  lastLogin: new Date("2025-01-05")
+ },
+ {
+  username: "Divya",
+  email: "divya@gmail.com",
+  age: 23,
+  lastLogin: new Date("2024-09-20")
+ }
+])
+
+db.users.find({ username: { $regex: "^A" } })
+
+db.users.updateOne(
+ { username: "Arun" },
+ { $set: { email: "arun_new@gmail.com" } }
+)
+
+db.users.find({ username: "Arun" })
+
+var sixMonthsAgo = new Date()
+sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+
+db.users.deleteMany({
+ lastLogin: { $lt: sixMonthsAgo }
+})
+
+db.users.find()
+
