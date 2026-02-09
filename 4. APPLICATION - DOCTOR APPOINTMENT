@@ -175,6 +175,140 @@ NEW=> OPEN FOLDER=> DOCTOR_SERVER => DOCTOR APP => SRC=>APP
 
 app.component.html
 
+<h2>Book Doctor Appointment</h2>
+
+<label>Patient Name:</label>
+<input type="text" [(ngModel)]="patientName"><br><br>
+
+<label>Select Doctor:</label>
+<select [(ngModel)]="doctorName">
+  <option value="">--Select--</option>
+  <option *ngFor="let d of doctors" [value]="d.NAME">
+    {{ d.NAME }}
+  </option>
+</select><br><br>
+
+<label>Appointment Date:</label>
+<input type="date" [(ngModel)]="appointmentDate"><br><br>
+
+<button (click)="bookAppointment()">Book</button>
+
+<hr>
+
+<h2>Doctor List</h2>
+<table border="1">
+<tr>
+  <th>ID</th>
+  <th>Name</th>
+  <th>Specialization</th>
+  <th>Time</th>
+</tr>
+<tr *ngFor="let d of doctors">
+  <td>{{d.ID}}</td>
+  <td>{{d.NAME}}</td>
+  <td>{{d.SPECIALIZATION}}</td>
+  <td>{{d.TIME}}</td>
+</tr>
+</table>
+
+<hr>
+
+<h2>Appointments</h2>
+<table border="1">
+<tr>
+  <th>ID</th>
+  <th>Patient</th>
+  <th>Doctor</th>
+  <th>Date</th>
+</tr>
+<tr *ngFor="let a of appointments">
+  <td>{{a.ID}}</td>
+  <td>{{a.PATIENT_NAME}}</td>
+  <td>{{a.DOCTOR_NAME}}</td>
+  <td>{{a.APPOINTMENT_DATE | date}}</td>
+</tr>
+</table>
+
+
+app.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html'
+})
+export class AppComponent implements OnInit {
+
+  patientName = '';
+  doctorName = '';
+  appointmentDate = '';
+
+  doctors: any[] = [];
+  appointments: any[] = [];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.loadDoctors();
+    this.loadAppointments();
+  }
+
+  loadDoctors() {
+    this.http.get<any[]>('http://localhost:3000/doctors')
+      .subscribe(data => this.doctors = data);
+  }
+
+  loadAppointments() {
+    this.http.get<any[]>('http://localhost:3000/appointments')
+      .subscribe(data => this.appointments = data);
+  }
+
+  bookAppointment() {
+    const body = {
+      patientName: this.patientName,
+      doctorName: this.doctorName,
+      appointmentDate: this.appointmentDate
+    };
+
+    this.http.post('http://localhost:3000/appointments', body)
+      .subscribe(() => {
+        alert('Appointment Booked');
+        this.loadAppointments();
+      });
+  }
+}
+
+
+app.module.ts
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpClientModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+in terminal give 
+ng server
+
+
+verify in browser
+http://localhost:3000/appointments
 
 
 
