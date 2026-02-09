@@ -1,0 +1,32 @@
+THIS PC => PROGRAM FILES => MONGODB => MONGOSH  => IN PATH TYPE CMD
+
+THEN,
+mongodb://127.0.0.1:27017
+
+
+use storeDB
+
+db.createCollection("products")
+
+db.products.insertMany([
+ { name: "Laptop", category: "Electronics", price: 800, creationDatcreationDate: ISODate("2024-01-10") },
+ { name: "Smartphone", category: "Electronics", price: 500, creatiocreationDate: ISODate("2024-01-12") },
+ { name: "HeadPhones", category: "Electronics", price: 100, creatiocreationDate: ISODate("2024-03-15") },
+ { name: "T-Shirt", category: "Clothing", price: 20, creationDate: ISODate("2024-03-20") },
+ { name: "Monitor", category: "Electronics", price: 200, creationDacreationDate: ISODate("2024-03-25") },
+ { name: "Mouse", category: "Electronics", price: 30, creationDate: ISODate("2024-03-28") },
+ { name: "Keyboard", category: "Electronics", price: 450, creationDcreationDate: ISODate("2024-03-30") }
+])
+
+db.products.find({
+ category: "Electronics",
+ price: { $gte: 50, $lte: 100 }
+})
+
+db.products.find({
+ creationDate: {
+  $gte: ISODate("2024-03-01"),
+  $lte: ISODate("2024-03-31")
+ }
+}).sort({ creationDate: 1 })
+
