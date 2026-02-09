@@ -1,0 +1,22 @@
+THIS PC => PROGRAM FILES => MONGODB => MONGOSH  => IN PATH TYPE CMD
+
+THEN,
+mongodb://127.0.0.1:27017
+
+
+use studentDB
+
+db.students.insertMany([
+ { studentId: 1, name: "Alice", age: 20, course: "BSc CS", email: "alice@gmail.com" },
+ { studentId: 2, name: "Bob", age: 22, course: "BCom", email: "bob@gmail.com" },
+ { studentId: 3, name: "Charlie", age: 21, course: "BA English", email: "charlie@gmail.com" },
+ { studentId: 4, name: "David", age: 23, course: "BSc Maths", email: "david@gmail.com" }
+]);
+
+db.students.find().pretty()
+
+mongodump --db studentDB --out C:\backup\student_backup
+
+db.dropDatabase()
+
+mongorestore --db studentDB C:\backup\student_backup\studentDB
