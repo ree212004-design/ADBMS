@@ -1,0 +1,63 @@
+THIS PC => PROGRAM FILES => MONGODB => MONGOSH  => IN PATH TYPE CMD
+
+THEN,
+mongodb://127.0.0.1:27017
+
+
+
+db.createCollection("products");
+
+db.products.insertMany([
+ {
+  name: "Product A",
+  customerReviews: [
+   { rating: 4, comment: "Great product!" },
+   { rating: 5, comment: "Excellent quality." },
+   { rating: 3, comment: "Could be better." }
+  ]
+ },
+ {
+  name: "Product B",
+  customerReviews: [
+   { rating: 2, comment: "Disappointing." },
+   { rating: 4, comment: "Good value for money." },
+   { rating: 5, comment: "Love it!" },
+   { rating: 3, comment: "Average product." }
+  ]
+ },
+ {
+  name: "Product C",
+  customerReviews: [
+   { rating: 5, comment: "Amazing product!" },
+   { rating: 5, comment: "Highly recommended." },
+   { rating: 4, comment: "Satisfied with the purchase." },
+   { rating: 5, comment: "Beyond expectations!" },
+   { rating: 4, comment: "Good features." },
+   { rating: 4, comment: "Nice design." }
+  ]
+ }
+]);
+
+db.products.aggregate([
+ { $unwind: "$customerReviews" },
+ {
+  $group: {
+   _id: "$_id",
+   name: { $first: "$name" },
+   averageRating: { $avg: "$customerReviews.rating" }
+  }
+ }
+]);
+
+db.products.aggregate([
+ {
+  $project: {
+   _id: 1,
+   name: 1,
+   numComments: { $size: { $ifNull: ["$customerReviews", []] } }
+  }
+ },
+ { $sort: { numComments: -1 } },
+ { $limit: 5 }
+]);
+
